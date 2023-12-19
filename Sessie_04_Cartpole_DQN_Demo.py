@@ -16,8 +16,9 @@ from tensorflow.keras.optimizers import Adam
 
 ###### Tensorflow-GPU ########
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+# physical_devices = tf.config.experimental.list_physical_devices('GPU')
+# print(physical_devices)
+# tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 
 class DQAgent:
@@ -55,7 +56,7 @@ class DQAgent:
         model.add(Dense(24, activation='relu'))
         #model.add(BatchNormalization())
         model.add(Dense(2, activation='linear'))
-        model.compile(loss='mse', optimizer=Adam(lr = 0.001), metrics=['MeanSquaredError'])
+        model.compile(loss='mse', optimizer=Adam(learning_rate = 0.001), metrics=['MeanSquaredError'])
         return model
 
     def q_network_fit(self,batch, batchSize):
@@ -94,7 +95,8 @@ DECAY = 0.999
 
 # Create Cartpole environment
 env = gym.make('CartPole-v0')
-state = env.reset()
+state = env.reset()[0]
+
 #state = env.reset()
 done =  False
 
@@ -114,7 +116,7 @@ for episode in range(200):
     stepCounter = 0  # count the number of successful steps within the episode
 
     #print('\n', episode)
-    state = env.reset()
+    state = env.reset()[0]
     done = False
     #state = np.expand_dims(state, axis=0)
 
@@ -133,7 +135,7 @@ for episode in range(200):
             #print('action =', action)
             #print(qValues)
 
-        newState, reward, done, info = env.step(action)
+        newState, reward, done, _, _ = env.step(action)
 
         if (done) and (stepCounter <199):
             reward = -10
